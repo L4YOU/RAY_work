@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "754909135653",
+    "firebase_url": "https://racearoundyou-164620.firebaseio.com",
+    "project_id": "racearoundyou-164620",
+    "storage_bucket": "racearoundyou-164620.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:754909135653:android:9ff33b5972f790b4",
+        "android_client_info": {
+          "package_name": "racearoundyou.ray"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "754909135653-i2d77nfcnml080g58tuf523m2ebkfsib.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "racearoundyou.ray",
+            "certificate_hash": "3c366f20a7a220309f2a4df4dca53aa39d531493"
+          }
+        },
+        {
+          "client_id": "754909135653-qp0u1dmp8nh0pu5hmta81b5bu4e5nje8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDziIbn28a1dtSlbjaUB__HQYvE9lI2QJQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "754909135653-qp0u1dmp8nh0pu5hmta81b5bu4e5nje8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
