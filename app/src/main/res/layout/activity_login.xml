@@ -1,46 +1,47 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_layout"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:background="@color/grey_main"
+    android:baselineAligned="false"
     android:orientation="vertical"
-    android:weightSum="4"
-    android:baselineAligned="false">
+    android:weightSum="4">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="300dp"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:layout_weight="2.16">
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/icon"
             style="@style/ThemeOverlay.FirebaseIcon"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
-            android:layout_marginBottom="-100dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:contentDescription="@string/desc_firebase_lockup" />
+
     </LinearLayout>
 
-
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="191dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:background="@color/grey_main"
         android:gravity="center_vertical"
-        android:visibility="visible"
-        android:layout_weight="0.82">
+        android:visibility="visible">
 
         <LinearLayout
             android:id="@+id/email_password_fields"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_weight="1"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/profile_fill"
+            android:layout_marginTop="16dp"
             android:orientation="vertical"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
+            android:visibility="visible"
             android:weightSum="1">
 
             <EditText
@@ -70,21 +71,21 @@
             android:id="@+id/email_password_buttons"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="19dp"
             android:layout_marginLeft="@dimen/text_input_width"
             android:layout_marginRight="@dimen/text_input_width"
             android:orientation="vertical"
             android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+            android:paddingRight="16dp"
+            android:visibility="visible"
+            android:layout_below="@+id/email_password_fields"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="12dp">
 
             <Button
                 android:id="@+id/email_sign_in_button"
                 android:layout_width="200dp"
                 android:layout_height="@dimen/text_input_width"
                 android:layout_gravity="center"
-                android:layout_weight="1"
                 android:text="@string/sign_in"
                 android:theme="@style/ThemeOverlay.MyDarkButton" />
 
@@ -93,12 +94,83 @@
                 android:layout_width="200dp"
                 android:layout_height="@dimen/text_input_width"
                 android:layout_gravity="center"
-                android:layout_weight="1"
                 android:text="@string/create_account"
                 android:theme="@style/ThemeOverlay.MyDarkButton" />
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/profile_fill"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/field_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/grey_100"
+                android:ems="10"
+                android:hint="Nickname"
+                android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingTop="15dp"
+                android:text="Выбор интересующих направлений"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="@color/grey_300" />
+
+            <CheckBox
+                android:id="@+id/competetive"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onCheckBoxClicked"
+                android:text="Соревнования"
+                android:textColor="@color/grey_300" />
+
+            <CheckBox
+                android:id="@+id/exhibition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onCheckBoxClicked"
+                android:text="Выставка"
+                android:textColor="@color/grey_300" />
+
+            <CheckBox
+                android:id="@+id/game"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onCheckBoxClicked"
+                android:text="Игры"
+                android:textColor="@color/grey_300" />
+
+            <CheckBox
+                android:id="@+id/tourism"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="onCheckBoxClicked"
+                android:text="Туризм"
+                android:textColor="@color/grey_300" />
+
+            <Button
+                android:id="@+id/fill_profile_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:onClick="onClick"
+                android:text="@string/accept" />
+
+        </LinearLayout>
     </RelativeLayout>
+
 
 </LinearLayout>

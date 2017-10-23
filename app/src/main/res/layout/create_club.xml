@@ -1,0 +1,74 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_main"
+    android:visibility="visible"
+    tools:context="racearoundyou.ray.CreateClub">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/club_name_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="29dp"
+        android:text="Создание сообщества"
+        android:textColor="@color/md_white_1000" />
+
+    <TextView
+        android:id="@+id/club_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/club_name_main"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="22dp"
+        android:text="Введите название сообщества"
+        android:textColor="@color/md_white_1000" />
+
+    <EditText
+        android:id="@+id/club_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/club_name_label"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="Название"
+        android:inputType="textPersonName"
+        android:textColor="@color/md_white_1000"
+        android:textColorHint="@color/md_white_1000" />
+
+    <TextView
+        android:id="@+id/club_desc_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/club_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp"
+        android:text="Краткое описание"
+        android:textColor="@color/md_white_1000" />
+
+    <EditText
+        android:id="@+id/club_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/club_name"
+        android:layout_below="@+id/club_desc_label"
+        android:layout_marginTop="19dp"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:textColor="@color/md_white_1000" />
+
+    <Button
+        android:id="@+id/create"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/club_desc"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Создать" />
+
+</RelativeLayout>

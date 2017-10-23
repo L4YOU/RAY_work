@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_main"
+    android:clipToPadding="false"
+    android:paddingBottom="@dimen/list_item_spacing_half"
+    android:paddingTop="@dimen/list_item_spacing_half"
+    tools:context="racearoundyou.ray.AddMarker">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/eName"
+        android:layout_alignStart="@+id/eName"
+        android:gravity="center"
+        android:text="ДОБАВЛЕНИЕ МЕРОПРИЯТИЯ"
+        android:textColor="@color/md_white_1000"
+        android:textSize="15sp" />
+
+    <EditText
+        android:id="@+id/eName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:hint="Название мероприятия"
+        android:inputType="textPersonName"
+        android:textColor="@color/md_white_1000"
+        android:textColorHighlight="@color/md_white_1000"
+        android:textColorHint="@color/md_white_1000"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:gravity="center"
+        android:text="ВЫБЕРИТЕ ДАТУ"
+        android:textColor="@color/md_white_1000"
+        android:textSize="15sp"
+        android:layout_below="@+id/eName"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:gravity="center"
+        android:text="ВЫБЕРИТЕ ВРЕМЯ"
+        android:textColor="@color/md_white_1000"
+        android:textSize="15sp"
+        android:layout_below="@+id/date"
+        android:layout_centerHorizontal="true" />
+
+    <CheckBox
+        android:id="@+id/compete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/time"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:text="Соревнования"
+        android:textColor="@color/md_white_1000" />
+
+    <CheckBox
+        android:id="@+id/exhib"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/compete"
+        android:layout_alignStart="@+id/compete"
+        android:layout_below="@+id/compete"
+        android:layout_marginTop="11dp"
+        android:text="Выставка"
+        android:textColor="@color/md_white_1000" />
+
+    <CheckBox
+        android:id="@+id/game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/exhib"
+        android:layout_alignStart="@+id/exhib"
+        android:layout_below="@+id/exhib"
+        android:layout_marginTop="15dp"
+        android:text="Игры"
+        android:textColor="@color/md_white_1000" />
+
+    <CheckBox
+        android:id="@+id/tour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/game"
+        android:layout_alignStart="@+id/game"
+        android:layout_below="@+id/game"
+        android:layout_marginTop="16dp"
+        android:text="Туризм"
+        android:textColor="@color/md_white_1000" />
+
+    <Button
+        android:id="@+id/add_event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tour"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="11dp"
+        android:onClick="onClick"
+        android:text="Создать" />
+
+</RelativeLayout>

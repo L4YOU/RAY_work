@@ -1,6 +1,5 @@
 package racearoundyou.ray;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -11,9 +10,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -21,7 +20,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A login screen that offers login via email/password.
@@ -35,19 +44,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private EditText mEmailField;
     private EditText mPasswordField;
+    private EditText mNickname;
+    private Database db;
+    private FirebaseUser user;
+    private User dbUser;
+    private Map<String, Integer> interests = new HashMap<>();
 
     // [START declare_auth]
     private FirebaseAuth mAuth;
     // [END declare_auth]
 
-    // [START declare_auth_listener]
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    // [END declare_auth_listener]
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        db = new Database();
+        db.setUPDB();
+        dbUser = new User();
         //load icon
         ImageView Icon = (ImageView) findViewById(R.id.icon);
         Glide.with(this)
@@ -56,6 +69,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Views
         mEmailField = (EditText) findViewById(R.id.field_email);
         mPasswordField = (EditText) findViewById(R.id.field_password);
+        mNickname = (EditText) findViewById(R.id.field_nickname);
 
         // Buttons
         findViewById(R.id.email_sign_in_button).setOnClickListener(this);
@@ -64,46 +78,34 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
-
-        // [START auth_state_listener]
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    finish();
-                } else {
-                    // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
-                }
-                // [START_EXCLUDE]
-                updateUI(user);
-                // [END_EXCLUDE]
-            }
-        };
-        // [END auth_state_listener]
     }
 
-//    // [START on_start_add_listener]
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        mAuth.addAuthStateListener(mAuthListener);
-//    }
-//    // [END on_start_add_listener]
-//
-//    // [START on_stop_remove_listener]
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        if (mAuthListener != null) {
-//            mAuth.removeAuthStateListener(mAuthListener);
-//        }
-//    }
-//    // [END on_stop_remove_listener]
+    @Override
+    public void onStart() {
+        super.onStart();
+        user = mAuth.getCurrentUser();
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null){
+            dbUser.setFirstAuth(bundle.getBoolean("isFirstAuth"));
+            if (dbUser.isFirstAuth()){
+                if (user != null){
+                    updateUI(user);
+                }
+            }
+        }
+    }
+    // [END on_start_add_listener]
+
+    // [START on_stop_remove_listener]
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+    }
+
+    // [END on_stop_remove_listener]
 
     private void createAccount(String email, String password) {
-        Log.d(TAG, "createAccount:" + email);
         if (!validateForm()) {
             return;
         }
@@ -120,13 +122,44 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, R.string.auth_failed,
-                                    Toast.LENGTH_SHORT).show();
+                            try {
+                                throw task.getException();
+                            } catch(FirebaseAuthWeakPasswordException e) {
+                                mPasswordField.setError("Ненадёжный пароль.");
+                                mPasswordField.requestFocus();
+                            } catch(FirebaseAuthInvalidCredentialsException e) {
+                                mEmailField.setError("Неправильный e-mail или пароль.");
+                                mEmailField.requestFocus();
+                            } catch(FirebaseAuthUserCollisionException e) {
+                                mEmailField.setError("Пользователь с таким e-mail уже зарегестрирован.");
+                                mEmailField.requestFocus();
+                            } catch(Exception e) {
+                                Log.e(TAG, e.getMessage());
+                            }
                         }
 
                     }
                 });
+        dbUser.setFirstAuth(true);
+        signIn(email, password);
         // [END create_user_with_email]
+    }
+
+    public void getUser(){
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            db.UserRef().child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    dbUser = dataSnapshot.getValue(User.class);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(LoginActivity.this, "CHECK DB RIGHTS", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     private void signIn(String email, String password) {
@@ -135,64 +168,34 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return;
         }
 
-
         // [START sign_in_with_email]
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
+                        getUser();
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
                             Toast.makeText(LoginActivity.this, R.string.auth_failed,
                                     Toast.LENGTH_SHORT).show();
-                        } else {
-                            finish();
+                        } else if (dbUser.isFirstAuth())
+                            {
+                                user = FirebaseAuth.getInstance().getCurrentUser();
+                                db.UserRef().child(user.getUid()).setValue(dbUser);
+                                updateUI(user);
+                            } else
+                                {
+                                    finish();
+                                }
                         }
-                    }
+                    });
                     // [END sign_in_with_email]
-                });
     }
 
-//    private void signOut() {
-//        mAuth.signOut();
-//        updateUI(null);
-//    }
-
-//    private void sendEmailVerification() {
-//        // Disable button
-//        findViewById(R.id.verify_email_button).setEnabled(false);
-//
-//        // Send verification email
-//        // [START send_email_verification]
-//        final FirebaseUser user = mAuth.getCurrentUser();
-//        user.sendEmailVerification()
-//                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        // [START_EXCLUDE]
-//                        // Re-enable button
-//                        findViewById(R.id.verify_email_button).setEnabled(true);
-//
-//                        if (task.isSuccessful()) {
-//                            Toast.makeText(EmailPasswordActivity.this,
-//                                    "Verification email sent to " + user.getEmail(),
-//                                    Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            Log.e(TAG, "sendEmailVerification", task.getException());
-//                            Toast.makeText(EmailPasswordActivity.this,
-//                                    "Failed to send verification email.",
-//                                    Toast.LENGTH_SHORT).show();
-//                        }
-//                        // [END_EXCLUDE]
-//                    }
-//                });
-//        // [END send_email_verification]
-//    }
 
     private boolean validateForm() {
         boolean valid = true;
@@ -218,31 +221,49 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-
             findViewById(R.id.email_password_buttons).setVisibility(View.GONE);
             findViewById(R.id.email_password_fields).setVisibility(View.GONE);
-//            findViewById(R.id.signed_in_buttons).setVisibility(View.VISIBLE);
-//
-//            findViewById(R.id.verify_email_button).setEnabled(!user.isEmailVerified());
+            findViewById(R.id.profile_fill).setVisibility(View.VISIBLE);
         } else {
-
             findViewById(R.id.email_password_buttons).setVisibility(View.VISIBLE);
             findViewById(R.id.email_password_fields).setVisibility(View.VISIBLE);
-//            findViewById(R.id.signed_in_buttons).setVisibility(View.GONE);
+            findViewById(R.id.profile_fill).setVisibility(View.GONE);
         }
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(View v)
+    {
         int i = v.getId();
-        if (i == R.id.email_create_account_button) {
-            createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
-        } else if (i == R.id.email_sign_in_button) {
-            signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
-//        } else if (i == R.id.sign_out_button) {
-//            signOut();
-//        } else if (i == R.id.verify_email_button) {
-//            sendEmailVerification();
+        switch (i){
+            case R.id.email_create_account_button:
+                createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
+                break;
+            case R.id.email_sign_in_button:
+                signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
+                break;
+            case R.id.fill_profile_button:
+                user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null) {
+                    UserProfileChangeRequest updateUser = new UserProfileChangeRequest.Builder().setDisplayName(mNickname.getText().toString()).build();
+                    user.updateProfile(updateUser).addOnCompleteListener(new OnCompleteListener<Void>()
+                    {
+                      @Override
+                      public void onComplete(@NonNull Task<Void> task) {
+                          if (task.isSuccessful()) {
+                              dbUser.setFirstAuth(false);
+                              dbUser.setNickname(user.getDisplayName());
+                              dbUser.setEmail(user.getEmail());
+                              dbUser.setInterests(interests);
+                              db.UserRef().child(user.getUid()).setValue(dbUser);
+                              LoginActivity.this.finish();
+                          }
+                      }
+                    });
+                } else
+                    {
+                        Log.d(TAG, "USER NULL!!!");
+                    }
         }
     }
 
@@ -260,5 +281,42 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+
+    public void onCheckBoxClicked(View view){
+        int counter = 0;
+        boolean checked = ((CheckBox) view).isChecked();
+        switch (view.getId()){
+            case R.id.competetive:
+                if (checked){
+                    counter++;
+                    interests.put(((CheckBox) view).getText().toString(), 5-counter);
+                } else {
+                    interests.put(((CheckBox) view).getText().toString(), 0);
+                }
+
+            case R.id.exhibition:
+                if (checked){
+                    counter++;
+                    interests.put(((CheckBox) view).getText().toString(), 5-counter);
+                }  else {
+                    interests.put(((CheckBox) view).getText().toString(), 0);
+                }
+            case R.id.game:
+                if (checked){
+                    counter++;
+                    interests.put(((CheckBox) view).getText().toString(), 5-counter);
+                } else {
+                    interests.put(((CheckBox) view).getText().toString(), 0);
+                }
+            case R.id.tourism:
+                if (checked){
+                    counter++;
+                    interests.put(((CheckBox) view).getText().toString(), 5-counter);
+                } else {
+                    interests.put(((CheckBox) view).getText().toString(), 0);
+                }
+        }
+    }
+
 }
 

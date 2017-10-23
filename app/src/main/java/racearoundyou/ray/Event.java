@@ -1,45 +1,30 @@
 package racearoundyou.ray;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import java.util.Map;
 
 /**
  * Created by L4YOU on 17.04.2017.
  */
 
 public class Event{
-    private String status;
-    @SerializedName("pushID")
-    @Expose
-    private String pushID;
-    @SerializedName("latitude")
-    @Expose
+
+    private String name;
     private Double latitude;
-    @SerializedName("longtitude")
-    @Expose
     private Double longtitude;
+    private String pushID;
+    private Map<String, Integer> Interests;
+    private String startdate;
+    private String starttime;
+//    private int people_amount;
 
-    public String getStatus(){
-        return status;
+    public Event(){}
+
+    public String getName() {
+        return name;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public MarkerOptions options(){
-        LatLng position = new LatLng(getLatitude(), getLongtitude());
-        MarkerOptions options = new MarkerOptions().position(position);
-        return options;
-    }
-
-    public String getPushId() { return pushID; }
-
-    public void setPushID(String pushId) {
-        this.pushID = pushId;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Double getLatitude() { return latitude; }
@@ -54,4 +39,55 @@ public class Event{
         this.longtitude = longtitude;
     }
 
+    public String getPushID() { return pushID; }
+
+    public void setPushID(String pushID) {
+        this.pushID = pushID;
+    }
+
+    public Map<String, Integer> getInterests() {return Interests; }
+
+    public void setInterests(Map<String, Integer> interests) {
+        Interests = interests;
+    }
+
+    public String getStartdate() {
+        return startdate;
+    }
+
+    public void setStartdate(String startdate) {
+        this.startdate = startdate;
+    }
+
+    public String getStarttime() {
+        return starttime;
+    }
+
+    public void setStarttime(String starttime) {
+        this.starttime = starttime;
+    }
+
+    //    public Date getStartDate() { return startdate; }
+//
+//    public void setStartDate(Date startdate) {
+//        this.startdate = startdate;
+//    }
+//
+//    public String getDesc() { return desc; }
+//
+//    public void setDesc(String desc) {
+//        this.desc = desc;
+//    }
+//
+//    public String getStyle() { return style; }
+//
+//    public void setStyle(String style) {
+//        this.style = style;
+//    }
+//
+//    public int getPeople_amount() { return people_amount; }
+//
+//    public void setPeople_amount(int people_amount) {
+//        this.people_amount = people_amount;
+//    }
 }
